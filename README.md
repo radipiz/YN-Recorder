@@ -1,10 +1,9 @@
 # YN-Recorder
-Gets Paramateres to record Livestreams and Records from YouNow
+Gets Parameters to dump livestreams and records from YouNow.
 
 ## Features
 * Recording live streams
-* Download records
-* Listing Records 
+* Downloading records
 
 ## Requirements
 * Python 3
@@ -15,11 +14,10 @@ Gets Paramateres to record Livestreams and Records from YouNow
 ```
 ./ynrecord.py  [-h] [--yes] [--onlylive] Username/Recordurl
 ```
-Enter a username and the program checks, if the user is streaming right now. It will offer to start dumping the stream.
-You can modify the behaviour of this with the parameters `--yes` to tell the program to start downloading a livestream automatically.
-`--onlylive` checks if the user is streaming and if so, it ask to download it (see `--yes`). After checking and a possible download, it will exit.
+Enter a username and the program checks if the user is streaming right now. It will offer to start dumping the stream. You can modify the behaviour of the startup by changing the parameters `--yes` to tell the program to start downloading a livestream without further userinteraction.
+Use `--onlylive` to check if the user is streaming and if so it offers you to download it (see `--yes`). When it's finished it will exit.
 
-Otherwise you can enter an full URL to an record as `start` parameter. The program will download it.
+Otherwise you can enter an full URL to a record as `start` parameter. The program will then start to download it.
 
 ## Notice
 This is program does not claim to be well done or stable. Use it a your own risk.
