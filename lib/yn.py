@@ -62,7 +62,7 @@ class YouNow:
         download = RecordDownload(m3u8, stream_basepath, '%s/%s' % (
             path % self.username, "record-%s.flv" % date_aired.strftime('%Y-%m-%d-%H-%M-%S')),
                                   thread_count=self.thread_count)
-        #download.start()
+        download.start()
 
         logger.debug('Removing temporary playlist')
         os.remove(playlist_path)
