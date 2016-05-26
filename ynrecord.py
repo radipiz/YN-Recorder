@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 
 import argparse
+import logging
 import os
-import re
-import sys
 from lib import yn
-from pprint import pprint
 
-def main(args):
+
+def main():
     args = parse_args()
     if yn.URLBASE in args.start:
         # record more
@@ -15,15 +14,16 @@ def main(args):
     else:
         proceed_user(args.start, live_yes=args.yes, only_live=args.onlylive)
 
+
 def proceed_user(username, live_yes=False, only_live=False):
-    client = yn.YouNow()
+    client = yn.YouNow(username)
     answer = 'n'
-    if client.is_live(username):
+    if client.is_live():
         if not live_yes:
             answer = input('[LIVE] %s is streaming right now! Start downloading? (y/n): ' % username)
         if answer.lower() == 'y' or live_yes:
             if already_downloading(username):
-                print('Alreading downloading livestream. Aborting')
+                logger.error('Alreading downloading livestream. Aborting')
                 return
             print('Recording Livestream now')
             live(client, username)
@@ -32,9 +32,8 @@ def proceed_user(username, live_yes=False, only_live=False):
         print('%s is not live :(' % username)
         return False
     start_from = 0
-    user_id = client.get_userid(username)
     while answer.lower() == 'n':
-        broadcasts = client.get_broadcasts(user_id, start_from)
+        broadcasts = client.get_broadcasts(start_from)
         if broadcasts is None:
             print('No more Broadcasts')
             return
@@ -42,28 +41,30 @@ def proceed_user(username, live_yes=False, only_live=False):
         for b in broadcasts:
             bdata = b['media']['broadcast']
             print('\t[%d] %s (%s)' % (
-                bdata['broadcastId'], 
-                client.parse_date(bdata['dateAired']), 
+                bdata['broadcastId'],
+                client.parse_date(bdata['dateAired']),
                 bdata['broadcastLengthMin']))
         answer = input('Streamid, \'n\' for next or blank to exit: ')
         try:
             broadcast_id = int(answer)
-            client.download(username, broadcast_id, user_id)
+            client.download(broadcast_id)
         except ValueError:
             pass
         if answer.lower() == 'n':
             start_from += yn.BROADCASTS_PER_PAGE
-            
+
+
 def live(client, username):
-    lockfile = 'live-%s.lock' % username 
+    lockfile = 'live-%s.lock' % username
     open(lockfile, 'w').close()
     try:
-        client.live(username)
+        client.live()
     except Exception as e:
         print(e)
         pass
     finally:
         os.unlink(lockfile)
+
 
 def already_downloading(username):
     lockfile = 'live-%s.lock' % username
@@ -76,17 +77,21 @@ def proceed_url(url):
     username = parts[3]
     broadcast_id = parts[4]
     salad = parts[6]
-    client = yn.YouNow()
-    print('Trying to download the stream')
-    client.download(username, broadcast_id)
+    client = yn.YouNow(username)
+    logger.info('Trying to download the stream %s from %s' % (broadcast_id, username))
+    client.download(broadcast_id)
 
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Records Streams from YouNow')
     parser.add_argument('start', action='store', help='An username or record url')
-    parser.add_argument('--yes', action='store_const', const=True, required=False, help='Anwers yes to any y/n questions')
-    parser.add_argument('--onlylive', action='store_const', const=True, required=False, help='Checks only if the user is live and quits otherwise')
+    parser.add_argument('--yes', action='store_const', const=True, required=False,
+                        help='Anwers yes to any y/n questions')
+    parser.add_argument('--onlylive', action='store_const', const=True, required=False,
+                        help='Checks only if the user is live and quits otherwise')
     return parser.parse_args()
 
 if __name__ == '__main__':
-    main(sys.argv)
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger(__name__)
+    main()
