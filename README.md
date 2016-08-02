@@ -8,7 +8,7 @@ Gets Parameters to dump livestreams and records from YouNow.
 ## Requirements
 * Python 3
 * requests
-* rtmpdump 2.3 binary in working directory (Version 2.4 won't work)
+* rtmpdump 2.3 binary in working directory for recording live streams (Version 2.4 won't work)
 
 ## Usage
 ```
