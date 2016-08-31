@@ -13,7 +13,7 @@ from pip._vendor.requests.utils import stream_decode_response_unicode
 
 from . import util
 
-URLBASE = 'https://www.younow.com/'
+URLBASE = 'https://bcm.younow.com/'
 BROADCASTS_PER_PAGE = 20
 RTMPDUMP = './rtmpdump'
 TMPDIR = './temp'
@@ -168,7 +168,7 @@ class YouNow:
 
     def get_broadcast_state(self):
         logger.debug('Getting broadcast state/user state')
-        r = requests.get(URLBASE + 'php/api/broadcast/info/user=%s' % self.
+        r = requests.get(URLBASE + 'broadcast/info/user=%s' % self.
                          username)
         try:
             return r.json()
