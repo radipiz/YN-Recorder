@@ -14,6 +14,9 @@ from pip._vendor.requests.utils import stream_decode_response_unicode
 from . import util
 
 URLBASE = 'https://bcm.younow.com/'
+CDNBASE = 'https://cdn.younow.com/php/api'
+STREAMHOST = 'pullstream.younow.8686c.com/'
+STREAMAPP = 'live'
 BROADCASTS_PER_PAGE = 20
 RTMPDUMP = './rtmpdump'
 TMPDIR = './temp'
@@ -152,12 +155,12 @@ class YouNow:
 
     def get_broadcastinfo(self, broadcast_id):
         logger.debug('Getting Broadcastinfo')
-        r = requests.get(URLBASE + '/php/api/post/get/entityId=%s/deepLink=b/channelId=%s' % (broadcast_id, self.user_id))
+        r = requests.get(CDNBASE + '/post/get/entityId=%s/deepLink=b/channelId=%s' % (broadcast_id, self.user_id))
         return r.json()
 
     def get_broadcasts(self, start_from=0):
         logger.debug('Getting Broadcasts starting at %s' % start_from)
-        r = requests.get(URLBASE + 'php/api/post/getBroadcasts/channelId=%s/startFrom=%s' % (self.user_id, start_from))
+        r = requests.get(CDNBASE + '/post/getBroadcasts/channelId=%s/startFrom=%s' % (self.user_id, start_from))
         return r.json()['posts']
 
     @staticmethod
@@ -182,7 +185,7 @@ class YouNow:
     @staticmethod
     def get_videopath(broadcast_id):
         logger.debug('Getting videopath')
-        r = requests.get('http://www.younow.com/php/api/broadcast/videoPath/broadcastId=%s' % broadcast_id)
+        r = requests.get(CDNBASE + '/broadcast/videoPath/broadcastId=%s' % broadcast_id)
         return r.json()
 
     def is_live(self):
@@ -275,3 +278,4 @@ class RecordDownload(object):
             for slot in range(self._thread_count):
                 self._process_thread(slot)
         logger.debug('Last thread finished')
+

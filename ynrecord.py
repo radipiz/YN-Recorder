@@ -48,7 +48,8 @@ def proceed_user(username, live_yes=False, only_live=False):
         try:
             broadcast_id = int(answer)
             client.download(broadcast_id)
-        except ValueError:
+        except ValueError as e:
+            logging.error('Something went wrong: ', e)
             pass
         if answer.lower() == 'n':
             start_from += yn.BROADCASTS_PER_PAGE
@@ -95,3 +96,4 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
     main()
+
