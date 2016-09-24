@@ -18,7 +18,7 @@ CDNBASE = 'https://cdn.younow.com/php/api'
 STREAMHOST = 'pullstream.younow.8686c.com/'
 STREAMAPP = 'live'
 BROADCASTS_PER_PAGE = 20
-RTMPDUMP = './rtmpdump'
+RTMPDUMP = 'rtmpdump'
 TMPDIR = './temp'
 
 logger = logging.getLogger(__name__)
@@ -137,7 +137,7 @@ class YouNow:
             val = datetime.fromtimestamp(datestr)
             return val
         else:
-            val = datetime.strptime(datestr, '%Y-%m-%d %H:%M:%S')
+            val = datetime.strptime(datestr, '%m-%d-%Y %H:%M:%S')
         return val + timedelta(hours=6)
 
     def find_broadcast(self, broadcast_id):
