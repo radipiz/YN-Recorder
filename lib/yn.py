@@ -13,7 +13,7 @@ from pip._vendor.requests.utils import stream_decode_response_unicode
 
 from . import util
 
-URLBASE = 'https://bcm.younow.com/'
+URLBASE = 'https://api.younow.com/php/api/'
 CDNBASE = 'https://cdn.younow.com/php/api'
 STREAMHOST = 'pullstream.younow.8686c.com/'
 STREAMAPP = 'live'
