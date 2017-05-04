@@ -29,6 +29,7 @@ class YouNow:
     def __init__(self, username):
         self.thread_count = 32
         self.username = username
+        self.__channel_id = None
         self.__user_id = None
         self.__session = None
 
@@ -160,8 +161,11 @@ class YouNow:
 
     def get_broadcasts(self, start_from=0):
         logger.debug('Getting Broadcasts starting at %s' % start_from)
-        r = requests.get(CDNBASE + '/post/getBroadcasts/channelId=%s/startFrom=%s' % (self.user_id, start_from))
-        return r.json()['posts']
+        r = requests.get(CDNBASE + '/post/getBroadcasts/channelId=%s/userId=%s' % (self.user_id, self.user_id))
+        result = r.json()
+        if result['errorCode'] == 1020:
+            raise PermissionError()
+        return result['posts']
 
     @staticmethod
     def _get_session():
@@ -278,4 +282,3 @@ class RecordDownload(object):
             for slot in range(self._thread_count):
                 self._process_thread(slot)
         logger.debug('Last thread finished')
-

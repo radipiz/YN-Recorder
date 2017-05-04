@@ -32,27 +32,31 @@ def proceed_user(username, live_yes=False, only_live=False):
         print('%s is not live :(' % username)
         return False
     start_from = 0
-    while answer.lower() == 'n':
-        broadcasts = client.get_broadcasts(start_from)
-        if broadcasts is None:
-            print('No more Broadcasts')
-            return
-        print('Showing %d broadcasts starting at %d' % (yn.BROADCASTS_PER_PAGE, start_from))
-        for b in broadcasts:
-            bdata = b['media']['broadcast']
-            print('\t[%d] %s (%s)' % (
-                bdata['broadcastId'],
-                client.parse_date(bdata['dateAired']),
-                bdata['broadcastLengthMin']))
-        answer = input('Streamid, \'n\' for next or blank to exit: ')
-        try:
-            broadcast_id = int(answer)
-            client.download(broadcast_id)
-        except ValueError as e:
-            logging.error('Something went wrong: ', e)
-            pass
-        if answer.lower() == 'n':
-            start_from += yn.BROADCASTS_PER_PAGE
+    try:
+        while answer.lower() == 'n':
+            broadcasts = client.get_broadcasts(start_from)
+            if broadcasts is None:
+                print('No more Broadcasts')
+                return
+            print('Showing %d broadcasts starting at %d' % (yn.BROADCASTS_PER_PAGE, start_from))
+            for b in broadcasts:
+                bdata = b['media']['broadcast']
+                print('\t[%d] %s (%s)' % (
+                    bdata['broadcastId'],
+                    client.parse_date(bdata['dateAired']),
+                    bdata['broadcastLengthMin']))
+            answer = input('Streamid, \'n\' for next or blank to exit: ')
+            try:
+                broadcast_id = int(answer)
+                client.download(broadcast_id)
+            except ValueError as e:
+                logging.error('Something went wrong: ', e)
+                pass
+            if answer.lower() == 'n':
+                start_from += yn.BROADCASTS_PER_PAGE
+    except PermissionError:
+        logging.error('Permission Denied! Either YN changed the API or the use somehow hides their broadcasts')
+
 
 
 def live(client, username):
