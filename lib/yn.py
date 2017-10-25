@@ -239,7 +239,11 @@ class RecordDownload(object):
     def _process_thread(self, slot):
         if self.__threads[slot]:
             self.__threads[slot].join()
+            if len(self.__download_buffer[slot]) == 0:
+                logger.warning('Found empty buffer in slot %d', slot)
             self.current_filesize += self._filehandle.write(self.__download_buffer[slot])
+            self.__download_buffer[slot] = b''
+            self.__threads[slot] = None
             self.files_downloaded += 1
             if report_progress:
                 logger.info('%8.d/%.8d\t%s' % (
