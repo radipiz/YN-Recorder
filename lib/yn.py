@@ -9,8 +9,6 @@ import threading
 
 from datetime import datetime, timedelta
 
-from pip._vendor.requests.utils import stream_decode_response_unicode
-
 from . import util
 
 URLBASE = 'https://api.younow.com/php/api/'
@@ -44,6 +42,8 @@ class YouNow:
         video_path = YouNow.get_videopath(broadcast_id)
 
         playlist_url = video_path['hls']
+        if not playlist_url:
+            raise RuntimeError("HLS Path is None. Either the API or the video is broken")
         logger.info('Playlist URL is %s' % playlist_url)
 
         playlist_path = os.path.join(TMPDIR, '%s.m3u8' % broadcast_id)
